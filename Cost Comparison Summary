@@ -1,0 +1,56 @@
+Cost Comparison Summary (as of 2024–2025 estimates)
+Feature	Azure Blob Storage (Cold Tier)	Azure Cosmos DB (Cold Container)
+Storage Cost	~$0.01/GB/month	~$0.25/GB/month
+Minimum Throughput	No RU/s charge	Min 400 RU/s = ~$24/month/container
+Access Cost	Yes (per read/write)	Included in RU/s
+Latency	Slower (seconds)	Fast (ms-level)
+Query Capabilities	None (unless indexed via AI Search or Data Lake)	Full Cosmos DB query support
+Best For	Archival, audit logs, backup	OLTP-style queries on cold data
+
+🧠 Example: 100 GB of Rarely Accessed Data
+Metric	Blob Cold Tier	Cosmos DB Cold Container
+Storage Cost	~$1/month	~$25/month
+Access Cost	Extra (e.g., $0.01 per 10,000 reads)	Included in RU/s
+Minimum RU/s	0	400 RU/s minimum ($24/month)
+Total Monthly Cost	~$1–2	~$25+
+
+If your app rarely reads cold data, Blob Storage is 10x–25x cheaper.
+
+✅ When to Use Each
+Use Azure Blob Cold Tier if:
+You rarely need to access old records (e.g., once a year or only for audits).
+
+You're okay with higher latency and batch access.
+
+You don’t need rich query support (use Azure AI Search if needed).
+
+Use Azure Cosmos DB Cold Container if:
+You still need queryable or low-latency access to old data.
+
+You need to filter, sort, or search old data frequently.
+
+You're okay with paying for minimum 400 RU/s (or autoscale floor).
+
+🔄 Hybrid Pattern (Best of Both)
+Many companies use this tiered approach:
+
+Store records <3 months in Cosmos DB (hot).
+
+Store 3–12 months in Cosmos DB cold container (if still queried).
+
+Store >1 year in Blob Cold or Archive tier (cheapest long-term storage).
+
+This gives:
+
+🔥 Fast access to recent data.
+
+❄️ Cost-optimized access to aging data.
+
+📦 Super-cheap archive storage for compliance.
+
+✅ Final Verdict
+Need	Recommendation
+Cost savings	Blob Cold Tier wins (cheaper by far)
+Query support	Cosmos DB wins
+OLTP + AI workflows	Cosmos DB with indexing
+Archive + compliance	Blob Cold/Archive Tier
