@@ -32,7 +32,6 @@ Write it to blob (e.g., in JSON format)
 
 Optionally flag the record in Cosmos DB as archived: true (initially keep it)
 
-Tip: Start with copying, not deleting, to avoid data loss.
 
 
 
