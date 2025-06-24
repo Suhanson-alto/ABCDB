@@ -1,0 +1,12 @@
+Recommended Solution Architecture
+ 
+
+Implement a TTL (Time to Live) policy in Cosmos DB (if possible) to automatically expire old docs after archival.
+Create an automated workflow (ADF, Functions, Logic Apps) to:
+Move records older than 3 months to Azure Blob Storage.
+Delete them from Cosmos DB.
+Maintain an index in Cosmos DB (or an auxiliary table) for record location.
+Read Flow:
+Query Cosmos DB.
+If record is missing, check Blob Storage using the auxiliary index; if present, fetch and deserialize.
+(Optionally, serve from cache or temporary return to Cosmos DB for accelerated secondary access.)
