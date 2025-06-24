@@ -11,5 +11,38 @@ Query Cosmos DB.
 If record is missing, check Blob Storage using the auxiliary index; if present, fetch and deserialize.
 (Optionally, serve from cache or temporary return to Cosmos DB for accelerated secondary access.)
 
+____________________________________________________________________________________________________________________________________________________________________________________________________________________
 
+
+Solution Overview
+
+Goal:
+Seamless, cost-effective data tiering for old records—without downtime, data loss, API contract changes, or major system disruption.
+ 
+Recommended Approach: Transparent Tiered Storage with On-Demand Retrieval
+ 
+1. Archive Old Records to Azure Blob Storage
+•	Move (NOT just copy!) records older than 3 months to Blob Storage.
+•	Use Data Factory, Logic App, or Azure Function for periodic archival.
+•	Delete those records from Cosmos DB to free space.
+2. API Layer “Read Through” Proxy
+•	Introduce a thin middleware (proxy) layer between your client apps and Cosmos DB.
+•	This middleware intercepts API reads:
+o	Tries Cosmos DB as usual.
+o	If not found, automatically checks Blob Storage and returns the data transparently.
+o	Existing API contracts and URLs remain unchanged; middleware implements the same contract.
+
+This can often be achieved by using Azure API Management policies if you already route through APIM, or a simple Azure Function/App Service that encapsulates the read-back logic, leaving your main service logic unchanged.
+3. Seamless Writes
+•	Writes (create/update) land only in Cosmos DB, as normal.
+•	Archived records are only for reads.
+
+
+How This Meets Your Requirements
+ 
+Requirement	      Solution Approach
+Simplicity	-      The middleware is a stateless, light service—easy with Function/API.
+No Data Loss -   	Data is moved only after confirming it’s safely in Blob.
+No Downtime  -   	Deployment is non-disruptive; traffic can be routed stepwise.
+No API Changes  -	Clients don’t know or care if data came from Cosmos DB or Blob.
 
